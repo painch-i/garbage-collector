@@ -1,0 +1,13 @@
+{
+  "name": "my-project",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "type": "module",
+  "dependencies": {
+    "@replit/database": "^3.0.1",
+    "bun": "^1.1.33",
+    "ejs": "^3.1.10"
+  }
+}

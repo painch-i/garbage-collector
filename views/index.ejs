@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Hunt Minimaliste</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .project {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form {
+            margin-bottom: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #ff6e40;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #ff5a2f;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Produits de la communauté</h1>
+
+    <div class="form">
+        <h2>Poster un nouveau projet</h2>
+        <form id="project-form">
+          <input type="text" id="title" placeholder="Title" required>
+          <input type="text" id="headline" placeholder="Headline" required>
+          <textarea id="pitch" placeholder="Pitch" required></textarea>
+          <input type="url" id="repositoryUrl" placeholder="Repository URL" required>
+          <button type="submit">Submit Project</button>
+        </form>
+
+    </div>
+
+    <h2>Liste des projets</h2>
+    <div id="projects-list">
+        <% projects.forEach(project => { %>
+          <div class="project">
+            <h2><%= project.title %></h2>
+            <h3><%= project.headline %></h3>
+            <p><%= project.pitch %></p>
+            <p>Votes: <%= project.votes %></p>
+            <p><a href="<%= project.repositoryUrl %>" target="_blank">View Repository</a></p>
+          </div>
+        <% }); %>
+    </div>
+
+    <script>
+        document.getElementById("project-form").addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          const title = document.getElementById("title").value;
+          const headline = document.getElementById("headline").value;
+          const pitch = document.getElementById("pitch").value;
+          const repositoryUrl = document.getElementById("repositoryUrl").value;
+
+          const projectData = {
+            title,
+            headline,
+            pitch,
+            repositoryUrl, // Inclure le lien du dépôt
+          };
+
+          try {
+            const response = await fetch("/projects", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(projectData),
+            });
+
+            if (response.ok) {
+              const newProject = await response.json();
+              // Ajoutez le projet à l'interface utilisateur sans recharger la page
+              addProjectToUI(newProject);
+              clearForm();
+            } else {
+              console.error("Failed to submit project:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Error submitting project:", error);
+          }
+        });
+
+        // Fonction pour ajouter un projet à l'interface utilisateur
+        function addProjectToUI(project) {
+          const projectsContainer = document.getElementById("projects-list");
+          const projectElement = document.createElement("div");
+          projectElement.className = "project";
+          projectElement.innerHTML = `
+            <h2>${project.title}</h2>
+            <h3>${project.headline}</h3>
+            <p>${project.pitch}</p>
+            <p>Votes: ${project.votes}</p>
+            <p><a href="${project.repositoryUrl}" target="_blank">View Repository</a></p>
+          `;
+          projectsContainer.appendChild(projectElement);
+        }
+
+        // Fonction pour vider le formulaire
+        function clearForm() {
+          document.getElementById("title").value = "";
+          document.getElementById("headline").value = "";
+          document.getElementById("pitch").value = "";
+          document.getElementById("repositoryUrl").value = "";
+        }
+
+    </script>
+
+</body>
+</html>
