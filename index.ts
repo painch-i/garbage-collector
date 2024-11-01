@@ -1,6 +1,6 @@
 import ejs from "ejs";
 import path from "path";
-import { Project, getProjects, addProject, upvoteProject } from "./projects"; // Importer les fonctions de projects.ts
+import { Project, getProjects, addProject, upvoteProject } from "./projects-local";
 
 const viewsPath = path.join(process.cwd(), "views");
 
