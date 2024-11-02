@@ -53,8 +53,7 @@ async function handlePostProject(request: Request): Promise<Response> {
     details,
     repositoryUrl,
   }: Project = await request.json();
-  const newProject: Project = {
-    id: 0, // L'ID sera déterminé lors de l'ajout
+  const newProject = {
     votes: 0,
     title,
     details,
