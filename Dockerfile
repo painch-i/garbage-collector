@@ -1,36 +1,19 @@
-# Utiliser l'image officielle de Bun
-FROM oven/bun:1 AS base
+# Utilisez l'image officielle de Bun
+FROM oven/bun:1
+
+# Définir le répertoire de travail
 WORKDIR /usr/src/app
 
-# Étape d'installation des dépendances
-FROM base AS install
-COPY package.json bun.lockb /temp/dev/
-# Installer les modules
-RUN cd /temp/dev && bun install --frozen-lockfile
-
-# Générer le client Prisma
-FROM install AS generate
-COPY prisma/ /temp/dev/prisma
-RUN cd /temp/dev && bun prisma generate
-
-# Vérifier que le client Prisma a été généré
-RUN ls -la /temp/dev/node_modules/.prisma/
-
-# Étape de production
-FROM base AS production
-COPY package.json bun.lockb /temp/prod/
-RUN cd /temp/prod && bun install --frozen-lockfile --production
-
-# Copier les autres modules de production
-COPY --from=install /temp/dev/node_modules node_modules
-# Copier le client Prisma généré dans l'étape de production
-COPY --from=generate /temp/dev/node_modules/.prisma/ /temp/prod/node_modules/.prisma/
+# Copier les fichiers de votre projet
+COPY package.json bun.lockb ./
 COPY . .
 
-# Configuration de l'environnement
-ENV NODE_ENV=production
+# Installer les dépendances
+RUN bun install --frozen-lockfile
+RUN bun prisma generate
 
-# Exécuter l'application
-USER bun
-EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "src/index.ts" ]
+# Exposer le port de l'application
+EXPOSE 3000
+
+# Commande pour exécuter l'application
+ENTRYPOINT ["bun", "run", "src/index.ts"]
