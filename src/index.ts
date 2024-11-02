@@ -8,8 +8,8 @@ const PUBLIC_DIR = "public";
 const LOGO_PUBLIC_PATH = "logo.png";
 const publicUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:3000`;
 const logoFullPath = `/${PUBLIC_DIR}/${LOGO_PUBLIC_PATH}`;
-const metaTitle = "The Abandoned Project Archive | Share & Discover Abandoned Code Projects";
-const metaDescription = "Explore and contribute to abandoned projects in The Abandoned Project Archive. Share your unfinished code, or discover and revitalize projects from the community.";
+const metaTitle = "The Abandoned Project Archive";
+const metaDescription = "Explore and contribute to abandoned projects. Share your unfinished code, or discover and revitalize projects from the community.";
 
 const viewsPath = path.join(process.cwd(), "views");
 const publicPath = path.join(process.cwd(), PUBLIC_DIR);
