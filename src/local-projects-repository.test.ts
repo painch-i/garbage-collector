@@ -15,7 +15,7 @@ describe("ProjectsLocalRepository", () => {
       details: "A Twitch channel streaming Family Guy 24/7",
       reason: "Frequent ban risk",
       votes: 0,
-      repositoryUrl: "https://github.com/example/family-guy-tv",
+      projectUrl: "https://github.com/example/family-guy-tv",
     };
 
     const newProject = await repository.addProject(projectData);
@@ -26,7 +26,7 @@ describe("ProjectsLocalRepository", () => {
     expect(newProject.details).toBe(projectData.details);
     expect(newProject.reason).toBe(projectData.reason);
     expect(newProject.votes).toBe(0);
-    expect(newProject.repositoryUrl).toBe(projectData.repositoryUrl);
+    expect(newProject.projectUrl).toBe(projectData.projectUrl);
   });
 
   it("should retrieve all projects", async () => {
@@ -36,7 +36,7 @@ describe("ProjectsLocalRepository", () => {
       details: "Details for project 1",
       reason: "Just for testing",
       votes: 0,
-      repositoryUrl: "https://github.com/example/project-1",
+      projectUrl: "https://github.com/example/project-1",
     });
 
     await repository.addProject({
@@ -44,7 +44,7 @@ describe("ProjectsLocalRepository", () => {
       details: "Details for project 2",
       reason: "Another test",
       votes: 0,
-      repositoryUrl: "https://github.com/example/project-2",
+      projectUrl: "https://github.com/example/project-2",
     });
 
     // Récupère tous les projets et vérifie qu'il y en a deux
@@ -61,7 +61,7 @@ describe("ProjectsLocalRepository", () => {
       details: "Project to test upvote",
       reason: "Testing",
       votes: 0,
-      repositoryUrl: "https://github.com/example/upvote-test",
+      projectUrl: "https://github.com/example/upvote-test",
     };
     const newProject = await repository.addProject(projectData);
 

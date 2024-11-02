@@ -6,7 +6,9 @@ const prisma = new PrismaClient();
 export class PrismaProjectsRepository implements ProjectsRepository {
   // Fonction pour récupérer tous les projets
   async getProjects(): Promise<Project[]> {
-    return await prisma.project.findMany();
+    return await prisma.project.findMany({
+      orderBy: [{ votes: 'desc' }, { createdAt: 'desc' }],
+    });
   }
 
   // Fonction pour ajouter un nouveau projet

@@ -103,13 +103,13 @@ async function handleGetProjects(): Promise<Response> {
 }
 
 async function handlePostProject(request: Request): Promise<Response> {
-  const { title, reason, details, repositoryUrl }: Project = await request.json();
+  const { title, reason, details, projectUrl }: Project = await request.json();
   const newProject = {
     votes: 0,
     title,
     details,
     reason,
-    repositoryUrl,
+    projectUrl,
   };
 
   const addedProject = await projectsRepository.addProject(newProject);

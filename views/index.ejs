@@ -31,58 +31,139 @@
 
     <link rel="icon" type="image/png" href="<%= publicUrl %><%= logoPath %>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f9fc;
-            color: #333;
-            margin: 0;
-            padding: 20px;
+      :root {
+            --main-bg-color: #f7f9fc;
+            --main-text-color: #333;
+            --primary-color: #5c4fd9;
+            --secondary-color: #666;
+            --white-color: #fff;
+            --modal-bg-color: #fefefe;
+            --modal-shadow: rgba(0, 0, 0, 0.1);
+            --border-radius: 5px;
+            --input-border-color: #ddd;
+            --button-hover-color: #8076df;
         }
-        h1 {
-            color: #d9534f;
-        }
-        p.description {
-            color: #666;
-            font-size: 1.2em;
-            margin-bottom: 40px;
-        }
-        .project {
-            background: #fff;
-            padding: 20px;
-            border-left: 4px solid #d9534f;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .form {
-            margin-bottom: 40px;
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+
+      body {
+          font-family: Arial, sans-serif;
+          background-color: var(--main-bg-color);
+          color: var(--main-text-color);
+          margin: 0;
+          padding: 20px;
+      }
+      h1 {
+          color: var(--primary-color);
+      }
+      p.description {
+          color: var(--secondary-color);
+          font-size: 1.2em;
+          margin-bottom: 40px;
+      }
+      .project {
+          background: var(--white-color);
+          padding: 20px;
+          border-left: 4px solid var(--primary-color);
+          border-radius: var(--border-radius);
+          margin-bottom: 20px;
+          box-shadow: 0 2px 4px var(--modal-shadow);
+      }
+      .form {
+          margin-bottom: 40px;
+          background: var(--white-color);
+          padding: 20px;
+          border-radius: var(--border-radius);
+          box-shadow: 0 2px 4px var(--modal-shadow);
+      }
+      input, textarea {
+          width: 100%;
+          padding: 10px;
+          margin: 10px 0;
+          border: 1px solid var(--input-border-color);
+          border-radius: var(--border-radius);
+          font-family: inherit;
+      }
+      button {
+          padding: 10px 20px;
+          background-color: var(--primary-color);
+          color: white;
+          border: none;
+          border-radius: var(--border-radius);
+          cursor: pointer;
+          font-weight: bold;
+      }
+      button:hover {
+          background-color: var(--button-hover-color);
+      }
+      /* Modal Styles */
+      .modal {
+          display: none; /* Hidden by default */
+          position: fixed; /* Stay in place */
+          z-index: 1; /* Sit on top */
+          left: 0;
+          top: 0;
+          width: 100%; /* Full width */
+          height: 100%; /* Full height */
+          overflow: auto; /* Enable scroll if needed */
+          background-color: rgb(0,0,0); /* Fallback color */
+          background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      }
+      .modal-content {
+          background-color: var(--modal-bg-color);
+          margin: 15% auto; /* 15% from the top and centered */
+          padding: 20px;
+          border: 1px solid #888;
+          width: 80%; /* Could be more or less, depending on screen size */
+          border-radius: var(--border-radius);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
+      .project h2 {
+          display: flex;
+          align-items: center; /* Center aligns the icon and text vertically */
+      }
+
+      .project h2 i {
+          color: #d9534f; /* Optional: change the icon color to match your theme */
+      }
+      .link-unstyled {
+          &,
+          &:visited,
+          &:hover,
+          &:active,
+          &:focus,
+          &:active:hover {
+            font-style: inherit;
+            color: inherit;
+            background-color: transparent;
+            font-size: inherit;
+            text-decoration: none;
+            font-variant: inherit;
+            font-weight: inherit;
+            line-height: inherit;
             font-family: inherit;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover {
-            background-color: #c9302c;
-        }
-    </style>
+            border-radius: inherit;
+            border: inherit;
+            outline: inherit;
+            box-shadow: inherit;
+            padding: inherit;
+            vertical-align: inherit;
+          }
+      }
+</style>
 </head>
 <body>
   <!-- Google Tag Manager (noscript) -->
@@ -91,45 +172,76 @@
   <!-- End Google Tag Manager (noscript) -->
 
     <h1>The Abandoned Project Archive</h1>
-    <p class="description">Welcome to the Abandoned Project Archive, a place for developers worldwide to share and discover unfinished or abandoned projects. 🌐 Submit a link to your dormant code, or explore others' work to bring it back to life. Let the community revive and reimagine what was left behind.</p>
+    <p class="description">
+      🌐 Submit a link to your dormant code, or explore others' work to bring it back to life. Let the community revive and reimagine what was left behind.
+    </p>
 
-    <div class="form">
-        <h2>Submit Your Abandoned Project</h2>
-        <form id="project-form">
-          <input type="text" id="title" placeholder="Project Title (e.g., AI Chatbot Assistant)" required>
-          <textarea id="details" placeholder="Brief Description (e.g., Key features, what ambition it has)" required></textarea>
-          <input type="text" id="reason" placeholder="Why It Was Abandoned (e.g., Lost Interest, Too Complex)" required>
-          <input type="url" id="repositoryUrl" placeholder="Repository URL (e.g., GitHub link)" required>
-          <button type="submit">Submit Project</button>
-        </form>
+    <button id="openModal">Submit your Project</button>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Submit your Project</h2>
+            <form id="project-form">
+              <input type="text" id="title" placeholder="Project Title (e.g., AI Chatbot Assistant)" required>
+              <textarea id="details" placeholder="Brief Description (e.g., Key features, what ambition it has)" required></textarea>
+              <input type="text" id="reason" placeholder="Why It Was Abandoned (e.g., Lost Interest, Too Complex)" required>
+              <input type="url" id="projectUrl" placeholder="Project URL (e.g., GitHub link, Landing page)" required>
+              <button type="submit">Submit Project</button>
+            </form>
+        </div>
     </div>
 
-    <h2>Explore Abandoned Projects</h2>
+    <h2>Explore Projects</h2>
     <div id="projects-list">
-        <% projects.forEach(project => { %>
-          <div class="project">
-            <h2><%= project.title %></h2>
-            <p><strong>Reason for Abandonment:</strong> <%= project.reason %></p>
-            <p><%= project.details %></p>
-            <p><a href="<%= project.repositoryUrl %>" target="_blank">View Repository</a></p>
-          </div>
-        <% }); %>
+      <% projects.forEach(project => { %>
+        <div class="project">
+          <h2>
+            <a class="link-unstyled" href="<%= project.projectUrl %>" target="_blank">
+              <i class="fas fa-external-link-alt" style="margin-right: 5px;"></i>
+              <%= project.title %>
+            </a>
+          </h2>
+          <p><%= project.details %></p>
+          <p><strong>Reason for Abandonment:</strong> <%= project.reason %></p>
+        </div>
+      <% }); %>
     </div>
 
     <script>
+        // Modal
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("openModal");
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
         document.getElementById("project-form").addEventListener("submit", async (event) => {
           event.preventDefault();
 
           const title = document.getElementById("title").value;
           const reason = document.getElementById("reason").value;
           const details = document.getElementById("details").value;
-          const repositoryUrl = document.getElementById("repositoryUrl").value;
+          const projectUrl = document.getElementById("projectUrl").value;
 
           const projectData = {
             title,
             reason,
             details,
-            repositoryUrl,
+            projectUrl,
           };
 
           try {
@@ -145,6 +257,7 @@
               const newProject = await response.json();
               addProjectToUI(newProject);
               clearForm();
+              modal.style.display = "none"; // Close the modal after submission
             } else {
               console.error("Failed to submit project:", response.statusText);
             }
@@ -158,19 +271,20 @@
           const projectElement = document.createElement("div");
           projectElement.className = "project";
           projectElement.innerHTML = `
-            <h2>${project.title}</h2>
-            <p><strong>Reason for Abandonment:</strong> ${project.reason}</p>
+            <h2>
+              <a class="link-unstyled" href="${project.projectUrl}" target="_blank">
+                <i class="fas fa-external-link-alt" style="margin-right: 5px;"></i>
+                ${project.title}
+              </a>
+            </h2>
             <p>${project.details}</p>
-            <p><a href="${project.repositoryUrl}" target="_blank">View Repository</a></p>
+            <p><strong>Reason for Abandonment:</strong> ${project.reason}</p>
           `;
-          projectsContainer.appendChild(projectElement);
+          projectsContainer.prepend(projectElement);
         }
 
         function clearForm() {
-          document.getElementById("title").value = "";
-          document.getElementById("reason").value = "";
-          document.getElementById("details").value = "";
-          document.getElementById("repositoryUrl").value = "";
+          document.getElementById("project-form").reset();
         }
     </script>
 </body>

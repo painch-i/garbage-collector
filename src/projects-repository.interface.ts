@@ -4,7 +4,7 @@ export interface Project {
   details: string;
   reason: string;
   votes: number;
-  repositoryUrl: string; // Lien du dépôt
+  projectUrl: string;
 }
 
 export interface ProjectsRepository {

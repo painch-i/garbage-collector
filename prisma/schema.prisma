@@ -17,5 +17,6 @@ model Project {
   details       String
   reason        String
   votes         Int      @default(0)
-  repositoryUrl String
+  projectUrl String
+  createdAt     DateTime @default(now())
 }
