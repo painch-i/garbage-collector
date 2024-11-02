@@ -1,11 +1,11 @@
 import ejs from "ejs";
 import path from "path";
-import { Project, getProjects, addProject, upvoteProject } from "./projects-local";
+import { Project, addProject, getProjects, upvoteProject } from "./projects-local";
 
 const viewsPath = path.join(process.cwd(), "views");
 
 const server = Bun.serve({
-  port: 3000,
+  port: process.env.PORT || 3000,
   fetch(request: Request) {
     const url = new URL(request.url);
 
