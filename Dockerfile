@@ -34,4 +34,4 @@ ENV NODE_ENV=production
 # Exécuter l'application
 USER bun
 EXPOSE 3000/tcp
-ENTRYPOINT [ "bun", "run", "sh" ]
+ENTRYPOINT [ "bun", "run", "src/index.ts" ]
