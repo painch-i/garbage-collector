@@ -2,7 +2,8 @@
   "name": "my-project",
   "module": "index.ts",
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prisma": "^5.21.1"
   },
   "type": "module",
   "dependencies": {
@@ -12,6 +13,7 @@
     "ejs": "^3.1.10"
   },
   "scripts": {
-    "prisma": "prisma"
+    "prisma": "prisma",
+    "postinstall": "prisma generate"
   }
 }
