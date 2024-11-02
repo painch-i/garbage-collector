@@ -15,6 +15,7 @@
   "scripts": {
     "prisma": "prisma",
     "generate": "bun prisma generate",
+    "postinstall": "bun generate",
     "start": "bun run src/index.ts",
     "deploy": "bun generate && bun start"
   }
