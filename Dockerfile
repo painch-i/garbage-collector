@@ -21,6 +21,9 @@ FROM base AS prerelease
 COPY --from=install /temp/dev/node_modules node_modules
 COPY . .
 
+# Generate Prisma client
+RUN npx prisma generate
+
 ENV NODE_ENV=production
 
 # copy production dependencies and source code into final image
