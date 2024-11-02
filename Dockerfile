@@ -21,11 +21,10 @@ FROM base AS production
 COPY package.json bun.lockb /temp/prod/
 RUN cd /temp/prod && bun install --frozen-lockfile --production
 
-# Copier le client Prisma généré dans l'étape de production
-COPY --from=generate /temp/dev/node_modules/.prisma/ /temp/prod/node_modules/.prisma/
-
 # Copier les autres modules de production
 COPY --from=install /temp/dev/node_modules node_modules
+# Copier le client Prisma généré dans l'étape de production
+COPY --from=generate /temp/dev/node_modules/.prisma/ /temp/prod/node_modules/.prisma/
 COPY . .
 
 # Configuration de l'environnement
