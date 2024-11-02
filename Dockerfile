@@ -16,4 +16,4 @@ RUN bun prisma generate
 EXPOSE 3000
 
 # Commande pour exécuter l'application
-ENTRYPOINT ["bun", "run", "src/index.ts"]
+ENTRYPOINT ["bun", "run", "deploy"]
