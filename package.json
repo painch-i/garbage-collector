@@ -6,8 +6,12 @@
   },
   "type": "module",
   "dependencies": {
+    "@prisma/client": "^5.21.1",
     "@replit/database": "^3.0.1",
     "bun": "^1.1.33",
     "ejs": "^3.1.10"
+  },
+  "scripts": {
+    "prisma": "prisma"
   }
 }

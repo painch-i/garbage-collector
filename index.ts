@@ -1,8 +1,11 @@
 import ejs from "ejs";
 import path from "path";
-import { Project, addProject, getProjects, upvoteProject } from "./projects-local";
+import { PrismaProjectsRepository } from "./prisma-projects-repository";
+import type { Project, ProjectsRepository } from "./projects-repository.interface";
 
 const viewsPath = path.join(process.cwd(), "views");
+const projectsRepository: ProjectsRepository = new PrismaProjectsRepository();
+
 
 const server = Bun.serve({
   port: process.env.PORT || 3000,
@@ -28,7 +31,7 @@ const server = Bun.serve({
 });
 
 async function renderIndex(): Promise<Response> {
-  const projects = await getProjects();
+  const projects = await projectsRepository.getProjects();
   console.table(projects);
   const html = await ejs.renderFile(path.join(viewsPath, "index.ejs"), { projects });
   return new Response(html, {
@@ -37,25 +40,29 @@ async function renderIndex(): Promise<Response> {
 }
 
 async function handleGetProjects(): Promise<Response> {
-  const projects = await getProjects(); // Récupérer les projets de la DB
+  const projects = await projectsRepository.getProjects(); // Récupérer les projets de la DB
   return new Response(JSON.stringify(projects), {
     headers: { "Content-Type": "application/json" },
   });
 }
 
 async function handlePostProject(request: Request): Promise<Response> {
-  const { title, headline, pitch, repositoryUrl }: Project = await request.json();
+  const {
+    title,
+    reason,
+    details,
+    repositoryUrl,
+  }: Project = await request.json();
   const newProject: Project = {
     id: 0, // L'ID sera déterminé lors de l'ajout
-    title,
-    headline,
-    pitch,
     votes: 0,
+    title,
+    details,
+    reason,
     repositoryUrl, // Inclure le lien du dépôt
   };
 
-  const addedProject = await addProject(newProject); // Ajouter le projet
-  addedProject.id = (await getProjects()).length; // Mettre à jour l'ID après l'ajout
+  const addedProject = await projectsRepository.addProject(newProject); // Ajouter le projet
   return new Response(JSON.stringify(addedProject), {
     headers: { "Content-Type": "application/json" },
     status: 201,
@@ -64,7 +71,7 @@ async function handlePostProject(request: Request): Promise<Response> {
 
 async function handleUpvoteProject(id: string): Promise<Response> {
   const projectId = parseInt(id, 10);
-  const project = await upvoteProject(projectId); // Mettre à jour le vote du projet
+  const project = await projectsRepository.upvoteProject(projectId); // Mettre à jour le vote du projet
 
   if (project) {
     return new Response(JSON.stringify(project), {

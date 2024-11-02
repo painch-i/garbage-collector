@@ -1,30 +1,37 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Hunt Minimaliste</title>
+    <title>The Abandoned Project Archive</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f6f6f6;
+            background-color: #f7f9fc;
+            color: #333;
             margin: 0;
             padding: 20px;
         }
         h1 {
-            color: #333;
+            color: #d9534f;
+        }
+        p.description {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 40px;
         }
         .project {
-            background: white;
+            background: #fff;
             padding: 20px;
+            border-left: 4px solid #d9534f;
             border-radius: 5px;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .form {
             margin-bottom: 40px;
-            background: white;
+            background: #fff;
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -35,44 +42,45 @@
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-family: inherit;
         }
         button {
             padding: 10px 20px;
-            background-color: #ff6e40;
+            background-color: #d9534f;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #ff5a2f;
+            background-color: #c9302c;
         }
     </style>
 </head>
 <body>
 
-    <h1>Produits de la communauté</h1>
+    <h1>The Abandoned Project Archive</h1>
+    <p class="description">Welcome to the Abandoned Project Archive, where developers from all corners of the world can lay their unfinished or abandoned projects to rest. 🌐 Share a link to your dormant code, and maybe someone else will breathe new life into it. Leave it here, let it go, and see what the community can make of it!</p>
 
     <div class="form">
-        <h2>Poster un nouveau projet</h2>
+        <h2>Submit Your Abandoned Project</h2>
         <form id="project-form">
-          <input type="text" id="title" placeholder="Title" required>
-          <input type="text" id="headline" placeholder="Headline" required>
-          <textarea id="pitch" placeholder="Pitch" required></textarea>
-          <input type="url" id="repositoryUrl" placeholder="Repository URL" required>
+          <input type="text" id="title" placeholder="Project Title (e.g., AI Chatbot Assistant)" required>
+          <textarea id="details" placeholder="Brief Description (e.g., Key features, what ambition it has)" required></textarea>
+          <input type="text" id="reason" placeholder="Why It Was Abandoned (e.g., Lost Interest, Too Complex)" required>
+          <input type="url" id="repositoryUrl" placeholder="Repository URL (e.g., GitHub link)" required>
           <button type="submit">Submit Project</button>
         </form>
-
     </div>
 
-    <h2>Liste des projets</h2>
+    <h2>Explore Abandoned Projects</h2>
     <div id="projects-list">
         <% projects.forEach(project => { %>
           <div class="project">
             <h2><%= project.title %></h2>
-            <h3><%= project.headline %></h3>
-            <p><%= project.pitch %></p>
-            <p>Votes: <%= project.votes %></p>
+            <p><strong>Reason for Abandonment:</strong> <%= project.reason %></p>
+            <p><%= project.details %></p>
             <p><a href="<%= project.repositoryUrl %>" target="_blank">View Repository</a></p>
           </div>
         <% }); %>
@@ -83,15 +91,15 @@
           event.preventDefault();
 
           const title = document.getElementById("title").value;
-          const headline = document.getElementById("headline").value;
-          const pitch = document.getElementById("pitch").value;
+          const reason = document.getElementById("reason").value;
+          const details = document.getElementById("details").value;
           const repositoryUrl = document.getElementById("repositoryUrl").value;
 
           const projectData = {
             title,
-            headline,
-            pitch,
-            repositoryUrl, // Inclure le lien du dépôt
+            reason,
+            details,
+            repositoryUrl,
           };
 
           try {
@@ -105,7 +113,6 @@
 
             if (response.ok) {
               const newProject = await response.json();
-              // Ajoutez le projet à l'interface utilisateur sans recharger la page
               addProjectToUI(newProject);
               clearForm();
             } else {
@@ -116,29 +123,25 @@
           }
         });
 
-        // Fonction pour ajouter un projet à l'interface utilisateur
         function addProjectToUI(project) {
           const projectsContainer = document.getElementById("projects-list");
           const projectElement = document.createElement("div");
           projectElement.className = "project";
           projectElement.innerHTML = `
             <h2>${project.title}</h2>
-            <h3>${project.headline}</h3>
-            <p>${project.pitch}</p>
-            <p>Votes: ${project.votes}</p>
+            <p><strong>Reason for Abandonment:</strong> ${project.reason}</p>
+            <p>${project.details}</p>
             <p><a href="${project.repositoryUrl}" target="_blank">View Repository</a></p>
           `;
           projectsContainer.appendChild(projectElement);
         }
 
-        // Fonction pour vider le formulaire
         function clearForm() {
           document.getElementById("title").value = "";
-          document.getElementById("headline").value = "";
-          document.getElementById("pitch").value = "";
+          document.getElementById("reason").value = "";
+          document.getElementById("details").value = "";
           document.getElementById("repositoryUrl").value = "";
         }
-
     </script>
 
 </body>

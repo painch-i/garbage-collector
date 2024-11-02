@@ -1,49 +1,39 @@
-import Database from "@replit/database";
+// import Database from "@replit/database";
 
-export interface Project {
-  id: number;
-  title: string;
-  headline: string;
-  pitch: string;
-  votes: number;
-  repositoryUrl: string;
-}
+// const db = new Database();
 
+// export async function getProjects(): Promise<Project[]> {
+//   const result = await db.get("projects");
 
-const db = new Database();
+//   if (isOkResult(result)) {
+//     return result.value || []; // Retourne les projets ou un tableau vide
+//   }
 
-export async function getProjects(): Promise<Project[]> {
-  const result = await db.get("projects");
+//   return []; // Retourne un tableau vide en cas d'erreur
+// }
 
-  if (isOkResult(result)) {
-    return result.value || []; // Retourne les projets ou un tableau vide
-  }
+// export async function addProject(project: Project): Promise<Project> {
+//   const projects = await getProjects();
+//   const newProject: Project = { ...project, id: projects.length + 1 }; // Assigne un nouvel ID
+//   projects.push(newProject);
+//   await db.set("projects", projects);
+//   return newProject;
+// }
 
-  return []; // Retourne un tableau vide en cas d'erreur
-}
+// export async function upvoteProject(id: number): Promise<Project | null> {
+//   const projects = await getProjects();
+//   const project = projects.find((p) => p.id === id);
 
-export async function addProject(project: Project): Promise<Project> {
-  const projects = await getProjects();
-  const newProject: Project = { ...project, id: projects.length + 1 }; // Assigne un nouvel ID
-  projects.push(newProject);
-  await db.set("projects", projects);
-  return newProject;
-}
+//   if (project) {
+//     project.votes++;
+//     await db.set("projects", projects);
+//     return project;
+//   }
 
-export async function upvoteProject(id: number): Promise<Project | null> {
-  const projects = await getProjects();
-  const project = projects.find((p) => p.id === id);
+//   return null;
+// }
 
-  if (project) {
-    project.votes++;
-    await db.set("projects", projects);
-    return project;
-  }
-
-  return null;
-}
-
-// Fonction utilitaire pour vérifier si le résultat est un OkResult
-function isOkResult(result: any): result is OkResult {
-  return result && typeof result === "object" && "value" in result;
-}
+// // Fonction utilitaire pour vérifier si le résultat est un OkResult
+// function isOkResult(result: any): result is OkResult {
+//   return result && typeof result === "object" && "value" in result;
+// }
