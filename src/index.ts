@@ -1,12 +1,15 @@
 import ejs from "ejs";
-import fs from "fs/promises";
+import fs from "fs";
 import path from "path";
 import { PrismaProjectsRepository } from "./prisma-projects-repository";
 import type { Project, ProjectsRepository } from "./projects-repository.interface";
 
 const PUBLIC_DIR = "public";
 const LOGO_PUBLIC_PATH = "logo.png";
-const publicUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:3000`;
+const DOMAIN_NAME = process.env.DOMAIN_NAME || "localhost";
+const PORT = process.env.PORT || 3000;
+const tlsOptions = getTlsOptions();
+let publicUrl = `${tlsOptions ? 'https' : 'http'}://${DOMAIN_NAME}:${PORT}`;
 const logoFullPath = `/${PUBLIC_DIR}/${LOGO_PUBLIC_PATH}`;
 const metaTitle = "The Abandoned Project Archive";
 const metaDescription = "Explore and contribute to abandoned projects. Share your unfinished code, or discover and revitalize projects from the community.";
@@ -15,39 +18,45 @@ const viewsPath = path.join(process.cwd(), "views");
 const publicPath = path.join(process.cwd(), PUBLIC_DIR);
 const projectsRepository: ProjectsRepository = new PrismaProjectsRepository();
 
-const server = Bun.serve({
-  port: process.env.PORT || 3000,
-  async fetch(request: Request) {
-    const url = new URL(request.url);
-    const pathname = url.pathname;
+async function startServer() {
+  const server = Bun.serve({
+    port: process.env.PORT || 3000,
+    tls: tlsOptions,
+    fetch: handleRequest,
+  });
+  console.log(`Server running at ${publicUrl}`);
+  }
 
-    // Servir les fichiers statiques du dossier "public"
-    if (pathname.startsWith(`/${PUBLIC_DIR}/`)) {
-      return serveStaticFile(pathname);
+async function handleRequest(request: Request): Promise<Response> {
+  const url = new URL(request.url);
+  const pathname = url.pathname;
+
+  // Servir les fichiers statiques du dossier "public"
+  if (pathname.startsWith(`/${PUBLIC_DIR}/`)) {
+    return serveStaticFile(pathname);
+  }
+
+  // Gestion des routes
+  if (pathname === "/") {
+    return renderIndex();
+  } else if (pathname === "/projects") {
+    if (request.method === "GET") {
+      return handleGetProjects();
+    } else if (request.method === "POST") {
+      return handlePostProject(request);
     }
+  } else if (pathname.startsWith("/upvote/")) {
+    const id = pathname.split("/")[2];
+    return handleUpvoteProject(id);
+  }
 
-    // Gestion des routes
-    if (pathname === "/") {
-      return renderIndex();
-    } else if (pathname === "/projects") {
-      if (request.method === "GET") {
-        return handleGetProjects();
-      } else if (request.method === "POST") {
-        return handlePostProject(request);
-      }
-    } else if (pathname.startsWith("/upvote/")) {
-      const id = pathname.split("/")[2];
-      return handleUpvoteProject(id);
-    }
-
-    return new Response("Not Found", { status: 404 });
-  },
-});
+  return new Response("Not Found", { status: 404 });
+}
 
 async function serveStaticFile(pathname: string): Promise<Response> {
   try {
     const filePath = path.join(publicPath, pathname.replace(`/${PUBLIC_DIR}/`, ""));
-    const file = await fs.readFile(filePath);
+    const file = fs.readFileSync(filePath);
     const ext = path.extname(filePath).toLowerCase();
     const contentType = getContentType(ext);
 
@@ -132,4 +141,16 @@ async function handleUpvoteProject(id: string): Promise<Response> {
   return new Response("Project not found", { status: 404 });
 }
 
-console.log(`Listening on localhost:${server.port}`);
+function getTlsOptions(): { key: string; cert: string } | undefined {
+  const keyPath = process.env.TLS_KEY_PATH;
+  const certPath = process.env.TLS_CERT_PATH;
+  if (!keyPath || !certPath) {
+    return;
+  }
+  const key = fs.readFileSync(keyPath, "utf8");
+  const cert = fs.readFileSync(certPath, "utf8");
+
+  return { key, cert };
+}
+
+startServer();
