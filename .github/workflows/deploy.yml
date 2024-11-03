@@ -33,7 +33,7 @@ jobs:
       # Étape 3 : Déployer le code sur le VPS
       - name: Déployer sur le VPS
         run: |
-          scp -r . $USER@$HOST:$TARGET_DIR/
+          scp -r * $USER@$HOST:$TARGET_DIR/
       # Étape 4 : Installer les dépendances et exécuter les migrations Prisma
       - name: Exécuter les migrations et installer les dépendances sur le VPS
         run: |
