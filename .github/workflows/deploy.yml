@@ -25,6 +25,10 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Ajouter le VPS aux hôtes connus
+        run: |
+          ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
 
       # Étape 3 : Déployer le code sur le VPS
       - name: Déployer sur le VPS
