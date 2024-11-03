@@ -7,6 +7,8 @@ import type { Project, ProjectsRepository } from "./projects-repository.interfac
 const PUBLIC_DIR = "public";
 const LOGO_PUBLIC_PATH = "logo.png";
 const DOMAIN_NAME = process.env.DOMAIN_NAME || "localhost";
+const CERT_PATH = `/etc/letsencrypt/live/${DOMAIN_NAME}/fullchain.pem`
+const KEY_PATH = `/etc/letsencrypt/live/${DOMAIN_NAME}/privkey.pem`
 const PORT = process.env.PORT || 3000;
 const tlsOptions = getTlsOptions();
 let publicUrl = `${tlsOptions ? 'https' : 'http'}://${DOMAIN_NAME}:${PORT}`;
@@ -142,15 +144,14 @@ async function handleUpvoteProject(id: string): Promise<Response> {
 }
 
 function getTlsOptions(): { key: string; cert: string } | undefined {
-  const keyPath = process.env.TLS_KEY_PATH;
-  const certPath = process.env.TLS_CERT_PATH;
-  if (!keyPath || !certPath) {
+  try {
+    const key = fs.readFileSync(KEY_PATH, "utf8");
+    const cert = fs.readFileSync(CERT_PATH, "utf8");
+    return { key, cert };
+  } catch {
+    console.log("No TLS certificate found, using HTTP");
     return;
   }
-  const key = fs.readFileSync(keyPath, "utf8");
-  const cert = fs.readFileSync(certPath, "utf8");
-
-  return { key, cert };
 }
 
 startServer();
