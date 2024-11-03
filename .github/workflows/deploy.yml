@@ -28,9 +28,14 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
       - name: Ajouter le VPS aux hôtes connus
         run: |
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
+
+      - name: Installer rsync sur le VPS
+        run: |
+          ssh $USER@$HOST "sudo apt update && sudo apt install -y rsync"
 
 
       - name: Déployer sur le VPS
