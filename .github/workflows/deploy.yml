@@ -1,0 +1,47 @@
+name: Déploiement sur VPS
+
+on:
+  push:
+    branches:
+      - main  # Déclenchement du workflow sur chaque push vers main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      USER: "root"      # Remplace par ton utilisateur SSH
+      HOST: "185.56.151.58"        # Remplace par l'adresse IP de ton VPS
+      TARGET_DIR: "/root/garbage-collector" # Dossier de destination sur le VPS
+      SERVICE_NAME: "garbage-collector"     # Nom du service à redémarrer
+
+    steps:
+      # Étape 1 : Cloner le dépôt
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Étape 2 : Configurer la clé SSH pour se connecter au VPS
+      - name: Ajouter la clé SSH pour le déploiement
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # Étape 3 : Déployer le code sur le VPS
+      - name: Déployer sur le VPS
+        run: |
+          rsync -avz --delete . $USER@$HOST:$TARGET_DIR/
+
+      # Étape 4 : Installer les dépendances et exécuter les migrations Prisma
+      - name: Exécuter les migrations et installer les dépendances sur le VPS
+        run: |
+          ssh $USER@$HOST << EOF
+            cd $TARGET_DIR
+            bun install # ou npm install si tu utilises npm
+            bun prisma migrate deploy
+            bun generate
+          EOF
+
+      # Étape 6 : Redémarrer le service sur le VPS
+      - name: Redémarrer le service
+        run: |
+          ssh $USER@$HOST "sudo systemctl restart $SERVICE_NAME"
