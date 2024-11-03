@@ -19,16 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Installer rsync
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y rsync
-
       - name: Ajouter la clé SSH pour le déploiement
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
+
       - name: Ajouter le VPS aux hôtes connus
         run: |
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
