@@ -16,11 +16,14 @@ jobs:
       SERVICE_NAME: "garbage-collector"     # Nom du service à redémarrer
 
     steps:
-      # Étape 1 : Cloner le dépôt
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Étape 2 : Configurer la clé SSH pour se connecter au VPS
+      - name: Installer rsync
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
+
       - name: Ajouter la clé SSH pour le déploiement
         uses: webfactory/ssh-agent@v0.5.3
         with:
@@ -30,11 +33,10 @@ jobs:
           ssh-keyscan -H $HOST >> ~/.ssh/known_hosts
 
 
-      # Étape 3 : Déployer le code sur le VPS
       - name: Déployer sur le VPS
         run: |
-          scp -r * $USER@$HOST:$TARGET_DIR/
-      # Étape 4 : Installer les dépendances et exécuter les migrations Prisma
+          rsync -avz --delete --exclude='.git*' . $USER@$HOST:$TARGET_DIR/
+
       - name: Exécuter les migrations et installer les dépendances sur le VPS
         run: |
           ssh $USER@$HOST << EOF
@@ -44,7 +46,6 @@ jobs:
             bun generate
           EOF
 
-      # Étape 6 : Redémarrer le service sur le VPS
       - name: Redémarrer le service
         run: |
           ssh $USER@$HOST "sudo systemctl restart $SERVICE_NAME"
