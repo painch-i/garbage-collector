@@ -17,6 +17,7 @@ model Project {
   details       String
   reason        String
   votes         Int      @default(0)
-  projectUrl String
+  projectUrl    String
+  socialLinks   String[]
   createdAt     DateTime @default(now())
 }

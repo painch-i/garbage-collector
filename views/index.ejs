@@ -165,6 +165,45 @@
             vertical-align: inherit;
           }
       }
+      .social-links {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid var(--input-border-color);
+      }
+
+      .social-icons {
+        display: flex;
+        gap: 10px;
+        margin-top: 5px;
+      }
+
+      .social-link {
+        color: var(--primary-color);
+        font-size: 1.2em;
+        transition: color 0.3s ease;
+      }
+
+      .social-link:hover {
+        color: var(--button-hover-color);
+      }
+
+      #socialLinksContainer {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #addSocialLink {
+        margin-top: 10px;
+        background-color: transparent;
+        color: var(--primary-color);
+        border: 1px solid var(--primary-color);
+      }
+
+      #addSocialLink:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
 </style>
 </head>
 <body>
@@ -190,6 +229,10 @@
               <textarea id="details" placeholder="Brief Description (e.g., Key features, what ambition it has)" required></textarea>
               <input type="text" id="reason" placeholder="Why It Was Abandoned (e.g., Lost Interest, Too Complex)" required>
               <input type="url" id="projectUrl" placeholder="Project URL (e.g., GitHub link, Landing page)" required>
+              <div id="socialLinksContainer">
+                <input type="url" class="socialLink" placeholder="Social Profile URL (e.g., Twitter, GitHub, LinkedIn)" />
+              </div>
+              <button type="button" id="addSocialLink">+ Add Another Social Link</button>
               <button type="submit">Submit Project</button>
             </form>
         </div>
@@ -198,16 +241,7 @@
     <h2>Explore Projects</h2>
     <div id="projects-list">
       <% projects.forEach(project => { %>
-        <div class="project">
-          <h2>
-            <a class="link-unstyled" href="<%= project.projectUrl %>" target="_blank">
-              <i class="fas fa-external-link-alt" style="margin-right: 5px;"></i>
-              <%= project.title %>
-            </a>
-          </h2>
-          <p><%= project.details %></p>
-          <p><strong>Reason for Abandonment:</strong> <%= project.reason %></p>
-        </div>
+        <%- createProjectHTML(project) %>
       <% }); %>
     </div>
 
@@ -231,19 +265,30 @@
             }
         }
 
+        // Gestionnaire pour ajouter des champs de liens sociaux
+        document.getElementById('addSocialLink').addEventListener('click', () => {
+          const container = document.getElementById('socialLinksContainer');
+          const input = document.createElement('input');
+          input.type = 'url';
+          input.className = 'socialLink';
+          input.placeholder = 'Social Profile URL (e.g., Twitter, GitHub, LinkedIn)';
+          container.appendChild(input);
+        });
+
+        // Modifier le gestionnaire de soumission du formulaire
         document.getElementById("project-form").addEventListener("submit", async (event) => {
           event.preventDefault();
 
-          const title = document.getElementById("title").value;
-          const reason = document.getElementById("reason").value;
-          const details = document.getElementById("details").value;
-          const projectUrl = document.getElementById("projectUrl").value;
+          const socialLinks = Array.from(document.getElementsByClassName('socialLink'))
+            .map(input => input.value)
+            .filter(value => value.trim() !== '');
 
           const projectData = {
-            title,
-            reason,
-            details,
-            projectUrl,
+            title: document.getElementById("title").value,
+            reason: document.getElementById("reason").value,
+            details: document.getElementById("details").value,
+            projectUrl: document.getElementById("projectUrl").value,
+            socialLinks
           };
 
           try {
@@ -259,7 +304,7 @@
               const newProject = await response.json();
               addProjectToUI(newProject);
               clearForm();
-              modal.style.display = "none"; // Close the modal after submission
+              modal.style.display = "none";
             } else {
               console.error("Failed to submit project:", response.statusText);
             }
@@ -268,25 +313,44 @@
           }
         });
 
+        // Modifier la fonction addProjectToUI pour inclure les liens sociaux
         function addProjectToUI(project) {
           const projectsContainer = document.getElementById("projects-list");
-          const projectElement = document.createElement("div");
-          projectElement.className = "project";
-          projectElement.innerHTML = `
-            <h2>
-              <a class="link-unstyled" href="${project.projectUrl}" target="_blank">
-                <i class="fas fa-external-link-alt" style="margin-right: 5px;"></i>
-                ${project.title}
-              </a>
-            </h2>
-            <p>${project.details}</p>
-            <p><strong>Reason for Abandonment:</strong> ${project.reason}</p>
-          `;
-          projectsContainer.prepend(projectElement);
+          const projectHTML = createProjectHTML(project);
+          projectsContainer.insertAdjacentHTML('afterbegin', projectHTML);
         }
 
         function clearForm() {
           document.getElementById("project-form").reset();
+        }
+
+        function createProjectHTML(project) {
+          const socialLinksHtml = project.socialLinks.length 
+            ? `<div class="social-links">
+                <p><strong>Social links:</strong></p>
+                <div class="social-icons">
+                  ${project.socialLinks.map(link => `
+                    <a href="${link}" target="_blank" class="social-link">
+                      <i class="fas fa-user-circle"></i>
+                    </a>
+                  `).join('')}
+                </div>
+              </div>`
+            : '';
+
+          return `
+            <div class="project">
+              <h2>
+                <a class="link-unstyled" href="${project.projectUrl}" target="_blank">
+                  <i class="fas fa-external-link-alt" style="margin-right: 5px;"></i>
+                  ${project.title}
+                </a>
+              </h2>
+              <p>${project.details}</p>
+              <p><strong>Reason for Abandonment:</strong> ${project.reason}</p>
+              ${socialLinksHtml}
+            </div>
+          `;
         }
     </script>
 </body>

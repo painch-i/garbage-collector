@@ -99,7 +99,35 @@ async function renderIndex(): Promise<Response> {
     publicUrl,
     logoPath: logoFullPath,
     metaTitle,
-    metaDescription
+    metaDescription,
+    createProjectHTML: function(project: Project) {
+      const socialLinksHtml = project.socialLinks.length 
+        ? `<div class="social-links">
+            <p><strong>Social links:</strong></p>
+            <div class="social-icons">
+              ${project.socialLinks.map(link => `
+                <a href="${link}" target="_blank" class="social-link">
+                  <i class="fas fa-user-circle"></i>
+                </a>
+              `).join('')}
+            </div>
+          </div>`
+        : '';
+
+      return `
+        <div class="project">
+          <h2>
+            <a class="link-unstyled" href="${project.projectUrl}" target="_blank">
+              <i class="fas fa-external-link-alt" style="margin-right: 5px;"></i>
+              ${project.title}
+            </a>
+          </h2>
+          <p>${project.details}</p>
+          <p><strong>Reason for Abandonment:</strong> ${project.reason}</p>
+          ${socialLinksHtml}
+        </div>
+      `;
+    }
   });
   return new Response(html, {
     headers: { "Content-Type": "text/html" },
@@ -114,13 +142,14 @@ async function handleGetProjects(): Promise<Response> {
 }
 
 async function handlePostProject(request: Request): Promise<Response> {
-  const { title, reason, details, projectUrl }: Project = await request.json();
+  const { title, reason, details, projectUrl, socialLinks }: Project = await request.json();
   const newProject = {
     votes: 0,
     title,
     details,
     reason,
     projectUrl,
+    socialLinks,
   };
 
   const addedProject = await projectsRepository.addProject(newProject);

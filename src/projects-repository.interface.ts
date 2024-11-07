@@ -5,6 +5,7 @@ export interface Project {
   reason: string;
   votes: number;
   projectUrl: string;
+  socialLinks: string[];
 }
 
 export interface ProjectsRepository {

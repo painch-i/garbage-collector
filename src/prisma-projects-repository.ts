@@ -1,29 +1,33 @@
 import { PrismaClient } from '@prisma/client';
 import type { Project, ProjectsRepository } from './projects-repository.interface';
 
-const prisma = new PrismaClient();
 
 export class PrismaProjectsRepository implements ProjectsRepository {
-  // Fonction pour récupérer tous les projets
+prisma = new PrismaClient();
+// Fonction pour récupérer tous les projets
   async getProjects(): Promise<Project[]> {
-    return await prisma.project.findMany({
+    return await this.prisma.project.findMany({
       orderBy: [{ votes: 'desc' }, { createdAt: 'desc' }],
     });
   }
 
   // Fonction pour ajouter un nouveau projet
   async addProject(project: Omit<Project, 'id'>): Promise<Project> {
-    const newProject = await prisma.project.create({
+    return await this.prisma.project.create({
       data: {
-        ...project,
+        title: project.title,
+        details: project.details,
+        reason: project.reason,
+        projectUrl: project.projectUrl,
+        votes: project.votes,
+        socialLinks: project.socialLinks,
       },
     });
-    return newProject;
   }
 
   // Fonction pour voter pour un projet
   async upvoteProject(id: number): Promise<Project | null> {
-    const project = await prisma.project.findUnique({
+    const project = await this.prisma.project.findUnique({
       where: { id },
     });
 
@@ -31,7 +35,7 @@ export class PrismaProjectsRepository implements ProjectsRepository {
       return null;
     }
 
-    return await prisma.project.update({
+    return await this.prisma.project.update({
       where: { id },
       data: { votes: project.votes + 1 },
     });
