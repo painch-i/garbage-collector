@@ -253,6 +253,10 @@
 
         btn.onclick = function() {
             modal.style.display = "block";
+            gtag('event', 'open_post_form', {
+              'event_category': 'interaction',
+              'event_label': 'Ouverture Formulaire de Post'
+            });
         }
 
         span.onclick = function() {
@@ -308,9 +312,15 @@
             } else {
               console.error("Failed to submit project:", response.statusText);
             }
+            gtag('event', 'submit_project', {
+              'event_category': 'interaction',
+              'event_label': 'Projet Posté'
+            });
+
           } catch (error) {
             console.error("Error submitting project:", error);
           }
+
         });
 
         // Modifier la fonction addProjectToUI pour inclure les liens sociaux
