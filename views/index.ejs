@@ -32,8 +32,11 @@
     <meta property="twitter:image" content="<%= publicUrl %><%= logoPath %>">
 
     <link rel="icon" type="image/png" href="<%= publicUrl %><%= logoPath %>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preload" href="/public/normalize.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/public/normalize.min.css"></noscript>
+
+    <link rel="preload" href="public/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="public/all.min.css"></noscript>
 
     <style>
       :root {
